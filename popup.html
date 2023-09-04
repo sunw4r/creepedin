@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CreepedIn</title>
+    <style>
+        body {
+            min-width: 400px;
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            background-color: #f2f2f2;
+        }
+
+        .pattern-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        textarea,
+        input[type="text"] {
+            width: 100%;
+            box-sizing: border-box;
+            background-color: #FFFFFF;
+            border: 1px solid #ccc;
+        }
+
+        label {
+            width: auto;
+            margin-top: 10px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        button {
+            width: 70%;
+            margin-top: 10px;
+            background-color: #bbb;
+            border: 1px solid #ccc;
+            padding: 6px;
+        }
+
+        #clearButton {
+            width: 30%;
+            background-color: #ccc;
+        }
+
+        button:active {
+            background-color: #808080;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>CreepedIn</h1>
+    <div class="container">
+        <textarea id="dataField" rows="10"></textarea>
+        <div class="pattern-box">
+            Patterns: <br>
+            <bold>
+                {firstname} <br>
+                {secondname} <br>
+                {lastname} <br>
+                {firstname_firstletter} <br>
+                {secondname_firstletter} <br>
+                {lastname_firstletter}</bold>
+        </div>
+        <label for="patternField">pattern</label>
+        <input type="text" id="patternField" value="{firstname}.{lastname}">
+        <!-- button container -->
+        <div class="button-container">
+            <button id="exportButton">export to txt</button>
+            <button id="clearButton">clear list</button>
+        </div>
+    </div>
+    <script src="popup.js"></script>
+</body>
+
+</html>
