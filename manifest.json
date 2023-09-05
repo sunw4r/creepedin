@@ -4,7 +4,6 @@
     "description": "Simple full name extraction and conversion to emails/usernames. Utilizes the 'people' tab of the target company on LinkedIn.",
     "version": "0.0.1666",
     "permissions": [
-        "activeTab",
         "storage"
     ],
     "action": {
