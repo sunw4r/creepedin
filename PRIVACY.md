@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Welcome to the privacy policy of CreepdeIn. This policy aims to inform you about how we handle your personal information when you use our extension.
+Welcome to the privacy policy of CreepedIn. This policy aims to inform you about how we handle your personal information when you use our extension.
 
 ## Collection and Use of Information
 
