@@ -20,6 +20,11 @@
 
 ## Installation ##
 
+Chrome Web Store
+https://chrome.google.com/webstore/detail/creepedin/mbhiifkhankomdcldcacejbciinblejh
+
+## Installation with source ##
+
 - Clone this repository to a folder of your choice
 - Type "chrome://extensions" into the URL
 - Turn on Developer Mode
