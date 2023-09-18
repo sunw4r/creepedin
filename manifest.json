@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "CreepedIn",
     "description": "Simple full name extraction and conversion to emails/usernames. Utilizes the 'people' tab of the target company on LinkedIn.",
-    "version": "0.0.1666",
+    "version": "0.0.2666",
     "permissions": [
         "storage"
     ],

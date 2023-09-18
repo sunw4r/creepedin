@@ -6,7 +6,7 @@ function checkDivChanges() {
 
   for (let i = 0; i < targetDivs.length; i++) {
     let textContent = targetDivs[i].textContent.trim();
-    if (textContent != "LinkedIn Member") {
+    if (!textContent.toLowerCase().includes('linkedin')) {
       dataList.push(textContent);
     }
   }
