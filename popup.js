@@ -16,6 +16,9 @@ function removeSpecialContent(text) {
     // Remove text enclosed in curly braces
     text = text.replace(/\{[^}]*\}/g, "");
 
+    // Remove suffix starting with comma or vertical bar
+    text = text.replace(/[,|].*$/, "");
+
     // Remove emojis using a regex (this may not catch all emojis)
     text = text.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, "");
 
@@ -32,7 +35,7 @@ function sanitizeFullName(fullName) {
     let sanitized = removeSpecialContent(fullName.toLowerCase());
     sanitized = removeAccentsAndSpecialChars(sanitized);
     sanitized = removeExtraSpaces(sanitized);
-    return sanitized;
+    return sanitized.trim();
 }
 
 // Remove duplicates from an array
