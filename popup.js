@@ -1,10 +1,11 @@
 function removeAccentsAndSpecialChars(str) {
-    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-zA-Z\s]/g, '');
+    return str
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-zA-Z\s]/g, "");
 }
 
 function formatNames(namesArray, formatPattern) {
-
     const formattedNames = [];
 
     for (const fullName of namesArray) {
@@ -30,7 +31,10 @@ function formatNames(namesArray, formatPattern) {
             .replace("{secondname}", secondName)
             .replace("{lastname}", lastName)
             .replace("{firstname_firstletter}", firstName.charAt(0))
-            .replace("{secondname_firstletter}", secondName ? secondName.charAt(0) : "")
+            .replace(
+                "{secondname_firstletter}",
+                secondName ? secondName.charAt(0) : ""
+            )
             .replace("{lastname_firstletter}", lastName.charAt(0));
 
         formattedNames.push(formattedName);
@@ -40,9 +44,9 @@ function formatNames(namesArray, formatPattern) {
 }
 
 function updateList() {
-    chrome.storage.local.get('dataList', data => {
+    chrome.storage.local.get("dataList", (data) => {
         if (data.dataList) {
-            dataField.value = data.dataList.join('\n');
+            dataField.value = data.dataList.join("\n");
         }
     });
 }
@@ -55,38 +59,72 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 //If popup is closed, update on open
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
+    const dataField = document.getElementById("dataField");
+    const textPattern = document.getElementById("patternField");
+    const textDomain = document.getElementById("domainField");
+    const exportButton = document.getElementById("exportButton");
+    const clearButton = document.getElementById("clearButton");
+    // Get references to the "Select All" checkbox and all pattern checkboxes
+    const selectAllCheckbox = document.querySelector("#selectAll");
+    const patternCheckboxes = document.querySelectorAll(
+        ".pattern-checkbox:not(#selectAll)"
+    );
 
-    const dataField = document.getElementById('dataField');
-    const textPattern = document.getElementById('patternField');
-    const exportButton = document.getElementById('exportButton');
-    const clearButton = document.getElementById('clearButton');
+    // Function to check/uncheck all pattern checkboxes based on "Select All" state
+    function toggleSelectAll() {
+        patternCheckboxes.forEach((checkbox) => {
+            checkbox.checked = selectAllCheckbox.checked;
+            const label = checkbox.parentElement;
+            if (checkbox.checked) {
+                label.classList.add("checked");
+            } else {
+                label.classList.remove("checked");
+            }
+        });
+    }
 
     updateList();
 
-    exportButton.addEventListener('click', () => {
+    exportButton.addEventListener("click", () => {
+        let formattedNames = formatNames(
+            dataField.value.split("\n"),
+            textPattern.value
+        );
 
-        let formattedNames = formatNames(dataField.value.split('\n'), textPattern.value)
-
-        const blob = new Blob([formattedNames.join('\n')], { type: 'text/plain;charset=utf-8' });
+        const blob = new Blob([formattedNames.join("\n")], {
+            type: "text/plain;charset=utf-8",
+        });
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
-        a.download = 'exported-creepedin.txt';
+        a.download = "exported-creepedin.txt";
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-
     });
 
-    clearButton.addEventListener('click', () => {
-
+    clearButton.addEventListener("click", () => {
         dataField.value = "";
         chrome.storage.local.clear(() => {
-            console.log('CreepedIn Storage cleared');
+            console.log("CreepedIn Storage cleared");
         });
-
     });
 
+    // Add a click event listener to the "Select All" checkbox
+    selectAllCheckbox.addEventListener("click", toggleSelectAll);
+
+    // Add event listener to all checkboxes on pattern field
+    patternCheckboxes.forEach((checkbox) => {
+        checkbox.addEventListener("change", function () {
+            const label = this.parentElement;
+            if (this.checked) {
+                label.classList.add("checked");
+            } else {
+                label.classList.remove("checked");
+                selectAllCheckbox.checked = false;
+            }
+        });
+    });
 });
