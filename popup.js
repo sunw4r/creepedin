@@ -158,6 +158,36 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Restore the previous state of domain and custom pattern fields
+    chrome.storage.local.get(["domain", "customPattern"], (data) => {
+        if (data.domain) {
+            textDomain.value = data.domain;
+        }
+
+        if (data.customPattern) {
+            textPattern.value = data.customPattern;
+        }
+    });
+
+    // Restore the previous state of all checkboxes
+    chrome.storage.local.get(null, (data) => {
+        if (data.selectAll) {
+            selectAllCheckbox.checked = data.selectAll;
+            toggleSelectAll();
+        }
+        patternCheckboxes.forEach((checkbox) => {
+            if (data[checkbox.id]) {
+                checkbox.checked = data[checkbox.id];
+                const label = checkbox.parentElement;
+                if (checkbox.checked) {
+                    label.classList.add("checked");
+                } else {
+                    label.classList.remove("checked");
+                }
+            }
+        });
+    });
+
     updateList();
 
     exportButton.addEventListener("click", () => {
@@ -201,4 +231,27 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     });
+});
+
+// Update storage when input is changed
+document.addEventListener("input", (event) => {
+    const target = event.target;
+
+    if (target.matches("#patternField")) {
+        chrome.storage.local.set({ customPattern: target.value.trim() });
+    } else if (target.matches("#domainField")) {
+        chrome.storage.local.set({ domain: target.value.trim() });
+    }
+});
+
+// Update chrome storage when any checkbox is changed.
+// Store the state of checked based on element id
+document.addEventListener("change", (event) => {
+    const target = event.target;
+
+    if (target.matches("#selectAll")) {
+        chrome.storage.local.set({ selectAll: target.checked });
+    } else if (target.matches(".pattern-checkbox")) {
+        chrome.storage.local.set({ [target.id]: target.checked });
+    }
 });
