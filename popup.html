@@ -1,87 +1,303 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <title>CreepedIn</title>
+        <style>
+            body {
+                min-width: 400px;
+                background-color: #f2f2f2;
+            }
 
-<head>
-    <title>CreepedIn</title>
-    <style>
-        body {
-            min-width: 400px;
-            background-color: #f2f2f2;
-        }
+            .container {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                background-color: #f2f2f2;
+            }
 
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            background-color: #f2f2f2;
-        }
+            .pattern-box {
+                border: 1px solid #ccc;
+                padding: 10px;
+                margin-top: 10px;
+            }
 
-        .pattern-box {
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-top: 10px;
-        }
+            .config-box {
+                border: 1px solid #ccc;
+                padding: 10px;
+                margin-top: 10px;
+            }
 
-        textarea,
-        input[type="text"] {
-            width: 100%;
-            box-sizing: border-box;
-            background-color: #FFFFFF;
-            border: 1px solid #ccc;
-        }
+            .text-blue {
+                color: #1366c8;
+            }
 
-        label {
-            width: auto;
-            margin-top: 10px;
-        }
+            .text-red {
+                color: #881111;
+            }
 
-        .button-container {
-            display: flex;
-            justify-content: flex-start;
-        }
+            /* Styling for the help icon */
+            .help-icon {
+                display: inline-block;
+                position: relative;
+            }
 
-        button {
-            width: 70%;
-            margin-top: 10px;
-            background-color: #bbb;
-            border: 1px solid #ccc;
-            padding: 6px;
-        }
+            .circle {
+                width: 1.5em;
+                height: 1.5em;
+                background-color: #1366c8; /* Circle background color (blue in this example) */
+                border-radius: 50%; /* Make it a circle */
+                text-align: center;
+                line-height: 1.5em; /* Center the text vertically */
+                color: #fff; /* Text color (white in this example) */
+                font-weight: bold;
+                cursor: help;
+                margin-right: 10px; /* Add space between the circle and label */
+            }
 
-        #clearButton {
-            width: 30%;
-            background-color: #ccc;
-        }
+            .question-mark {
+                font-size: 1.2em; /* Adjust the font size as needed */
+            }
 
-        button:active {
-            background-color: #808080;
-        }
-    </style>
-</head>
+            .tooltip {
+                position: absolute;
+                background-color: #616161;
+                color: #fff;
+                padding: 10px;
+                border-radius: 4px;
+                white-space: nowrap;
+                z-index: 1;
+                display: none; /* Hide initially */
+            }
 
-<body>
-    <h1>CreepedIn</h1>
-    <div class="container">
-        <textarea id="dataField" rows="10"></textarea>
-        <div class="pattern-box">
-            Patterns: <br>
-            <bold>
-                {firstname} <br>
-                {secondname} <br>
-                {lastname} <br>
-                {firstname_firstletter} <br>
-                {secondname_firstletter} <br>
-                {lastname_firstletter}</bold>
+            /* Show the tooltip on hover */
+            .help-icon:hover .tooltip {
+                display: block;
+                top: 30px; /* Adjust the distance below the icon as needed */
+                left: -10px; /* Adjust the horizontal position as needed */
+            }
+
+            .tooltip-title {
+                font-weight: bold;
+                font-size: 1.3em;
+            }
+            /* Style for the tooltip message */
+            .tooltip p {
+                margin-bottom: 10px; /* Add space between the message and the list */
+            }
+
+            /* Style for the tooltip list */
+            .tooltip dl {
+                /* list-style-type: disc; */
+                padding-left: 2em; /* Add indentation for the list items */
+            }
+
+            .tooltip dt {
+                font-weight: bold;
+            }
+
+            /* Add top margin for all dd elements except the first one (top margin is
+    added to the first dd element in the tooltip message) */
+            .tooltip dt:not(:first-child) {
+                margin-top: 1em;
+            }
+
+            /* Set margins for all dd elements */
+            .tooltip dd {
+                margin-left: 2em;
+                margin-top: 0.5em;
+            }
+
+            textarea,
+            input[type="text"] {
+                width: 100%;
+                box-sizing: border-box;
+                background-color: #ffffff;
+                border: 1px solid #ccc;
+            }
+
+            .pattern-box label {
+                display: flex;
+                align-items: center;
+                width: auto;
+            }
+
+            .pattern-box label:not(:first-child) {
+                margin-top: 1em;
+            }
+
+            .button-container {
+                display: flex;
+                justify-content: flex-start;
+            }
+
+            button {
+                width: 70%;
+                margin-top: 10px;
+                background-color: #bbb;
+                border: 1px solid #ccc;
+                padding: 6px;
+            }
+
+            #clearButton {
+                width: 30%;
+                background-color: #ccc;
+            }
+
+            button:active {
+                background-color: #808080;
+            }
+
+            h2 {
+                margin-top: 0;
+                font-size: medium;
+            }
+
+            h3 {
+                font-size: small;
+            }
+
+            /* Styling for pattern checkboxes */
+            .pattern-checkbox {
+                margin-right: 10px; /* Add some space between checkboxes */
+            }
+
+            /* Style when a pattern checkbox is checked */
+            .checkbox-label.checked {
+                font-weight: bold; /* Make the label text bold when the checkbox is checked */
+                color: #1366c8; /* Change the text color when checked (blue in this example) */
+            }
+
+            /* Style for the "Select All" checkbox label */
+            label[for="selectAll"] {
+                font-style: italic; /* Make the label text italic for the "Select All" checkbox */
+                color: #888; /* Set a different color (gray in this example) */
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1>
+            <span class="text-red">Creeped</span
+            ><span class="text-blue">In</span>
+        </h1>
+        <div class="container">
+            <textarea id="dataField" rows="10"></textarea>
+            <div class="pattern-box">
+                <h2 class="text-red" style="display: inline-block">
+                    Patterns:
+                </h2>
+                <!-- Help icon for patterns -->
+                <sup>
+                    <div class="help-icon">
+                        <div class="circle">
+                            <span class="question-mark">?</span>
+                        </div>
+                        <div class="tooltip">
+                            <p class="tooltip-title">Available Patterns:</p>
+                            <dl>
+                                <dt>{firstname}</dt>
+                                <dd>First name of the person</dd>
+                                <dt>{secondname}</dt>
+                                <dd>Second name of the person</dd>
+                                <dt>{lastname}</dt>
+                                <dd>Last name of the person</dd>
+                                <dt>{firstname_firstletter}</dt>
+                                <dd>
+                                    First letter of the first name of the person
+                                </dd>
+                                <dt>{secondname_firstletter}</dt>
+                                <dd>
+                                    First letter of the second name of the
+                                    person
+                                </dd>
+                                <dt>{lastname_firstletter}</dt>
+                                <dd>
+                                    First letter of the last name of the person
+                                </dd>
+                            </dl>
+                        </div>
+                    </div></sup
+                ><br />
+                <label for="firstname" class="checkbox-label"
+                    ><input
+                        type="checkbox"
+                        class="pattern-checkbox"
+                        id="firstname"
+                        value="firstname"
+                    />{firstname}@{domain}</label
+                >
+                <label for="secondname" class="checkbox-label"
+                    ><input
+                        type="checkbox"
+                        class="pattern-checkbox"
+                        id="secondname"
+                        value="secondname"
+                    />{secondname}@{domain}</label
+                >
+                <label for="lastname" class="checkbox-label"
+                    ><input
+                        type="checkbox"
+                        class="pattern-checkbox"
+                        id="lastname"
+                        value="lastname"
+                    />{lastname}@{domain}</label
+                >
+                <label for="firstname_lastname" class="checkbox-label"
+                    ><input
+                        type="checkbox"
+                        class="pattern-checkbox"
+                        id="firstname_lastname"
+                        value="firstname_lastname"
+                    />{firstname}{lastname}@{domain}</label
+                >
+                <label for="firstname_dot_lastname" class="checkbox-label"
+                    ><input
+                        type="checkbox"
+                        class="pattern-checkbox"
+                        id="firstname_dot_lastname"
+                        value="firstname_dot_lastname"
+                    />{firstname}.{lastname}@{domain}</label
+                >
+                <label
+                    for="firstname_firstletter_lastname"
+                    class="checkbox-label"
+                    ><input
+                        type="checkbox"
+                        class="pattern-checkbox"
+                        id="firstname_firstletter_lastname"
+                        value="firstname_firstletter_lastname"
+                    />{firstname_firstletter}{lastname}@{domain}</label
+                >
+                <!-- Uncomment this block if needed -->
+                <!-- <label for="firstname_firstletter_secondname_firstletter_lastname"><input type="checkbox" class="pattern-checkbox" id="firstname_firstletter_secondname_firstletter_lastname" value="firstname_firstletter_secondname_firstletter_lastname" />{firstname_firstletter}{secondname_firstletter}{lastname}@{domain}</label><br> -->
+                <label for="selectAll"
+                    ><input type="checkbox" class="pattern-checkbox"  id="selectAll" />Select
+                    All</label
+                >
+
+                <label for="patternField"
+                    ><h3 class="text-red">Custom Pattern:</h3></label
+                >
+                <input
+                    type="text"
+                    id="patternField"
+                    placeholder="{lastname}{firstname_firstletter}@{domain}"
+                />
+            </div>
+
+            <div class="config-box">
+                <label for="domainField"
+                    ><h2 class="text-red">Domain:</h2></label
+                >
+                <input type="text" id="domainField" placeholder="contoso.com" />
+            </div>
+
+            <!-- button container -->
+            <div class="button-container">
+                <button id="exportButton">Export to txt</button>
+                <button id="clearButton">Clear List</button>
+            </div>
         </div>
-        <label for="patternField">pattern</label>
-        <input type="text" id="patternField" value="{firstname}.{lastname}">
-        <!-- button container -->
-        <div class="button-container">
-            <button id="exportButton">export to txt</button>
-            <button id="clearButton">clear list</button>
-        </div>
-    </div>
-    <script src="popup.js"></script>
-</body>
-
+        <script src="popup.js"></script>
+    </body>
 </html>
