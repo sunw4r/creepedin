@@ -147,6 +147,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Function to check/uncheck all pattern checkboxes based on "Select All" state
     function toggleSelectAll() {
+        const patternCheckboxes = document.querySelectorAll(
+            ".pattern-checkbox:not(#selectAll)"
+        );
         patternCheckboxes.forEach((checkbox) => {
             checkbox.checked = selectAllCheckbox.checked;
             const label = checkbox.parentElement;
@@ -155,8 +158,45 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 label.classList.remove("checked");
             }
+            // Update chrome storage
+            chrome.storage.local.set({ [checkbox.id]: checkbox.checked });
         });
     }
+
+    // Function to verify if all pattern checkboxes are checked
+    function areAllChecked() {
+        let allChecked = true;
+        patternCheckboxes.forEach((checkbox) => {
+            if (!checkbox.checked) {
+                allChecked = false;
+            }
+        });
+        return allChecked;
+    }
+
+    // Restore the previous state of user's choices
+    chrome.storage.local.get(null, (data) => {
+        if (data.domain) {
+            textDomain.value = data.domain;
+        }
+        if (data.customPattern) {
+            textPattern.value = data.customPattern;
+        }
+        if (data.selectAll) {
+            selectAllCheckbox.checked = data.selectAll;
+        }
+        patternCheckboxes.forEach((checkbox) => {
+            if (data[checkbox.id]) {
+                checkbox.checked = data[checkbox.id];
+                const label = checkbox.parentElement;
+                if (checkbox.checked) {
+                    label.classList.add("checked");
+                } else {
+                    label.classList.remove("checked");
+                }
+            }
+        });
+    });
 
     updateList();
 
@@ -195,10 +235,39 @@ document.addEventListener("DOMContentLoaded", () => {
             const label = this.parentElement;
             if (this.checked) {
                 label.classList.add("checked");
+                if (areAllChecked()) {
+                    selectAllCheckbox.checked = true;
+                    // Update chrome storage
+                    chrome.storage.local.set({ selectAll: true });
+                }
             } else {
                 label.classList.remove("checked");
                 selectAllCheckbox.checked = false;
+                // Update chrome storage
+                chrome.storage.local.set({ selectAll: false });
             }
         });
     });
+});
+
+// Update chrome storage when input is changed
+document.addEventListener("input", (event) => {
+    const target = event.target;
+
+    if (target.matches("#patternField")) {
+        chrome.storage.local.set({ customPattern: target.value.trim() });
+    } else if (target.matches("#domainField")) {
+        chrome.storage.local.set({ domain: target.value.trim() });
+    }
+});
+
+// Update chrome storage when any checkbox is changed
+document.addEventListener("change", (event) => {
+    const target = event.target;
+
+    if (target.matches("#selectAll")) {
+        chrome.storage.local.set({ selectAll: target.checked });
+    } else if (target.matches(".pattern-checkbox")) {
+        chrome.storage.local.set({ [target.id]: target.checked });
+    }
 });

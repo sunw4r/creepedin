@@ -142,9 +142,19 @@
                 width: 30%;
                 background-color: #ccc;
             }
-
-            button:active {
+            /* Add effect on button interactions */
+            button:hover {
                 background-color: #808080;
+            }
+            button:active {
+                background-color: #666;
+            }
+            #clearButton:hover {
+                background-color: #999;
+            }
+
+            #clearButton:active {
+                background-color: #666;
             }
 
             h2 {
@@ -271,8 +281,12 @@
                 <!-- Uncomment this block if needed -->
                 <!-- <label for="firstname_firstletter_secondname_firstletter_lastname"><input type="checkbox" class="pattern-checkbox" id="firstname_firstletter_secondname_firstletter_lastname" value="firstname_firstletter_secondname_firstletter_lastname" />{firstname_firstletter}{secondname_firstletter}{lastname}@{domain}</label><br> -->
                 <label for="selectAll"
-                    ><input type="checkbox" class="pattern-checkbox"  id="selectAll" />Select
-                    All</label
+                    ><input
+                        type="checkbox"
+                        class="pattern-checkbox"
+                        id="selectAll"
+                        value="select_all"
+                    />Select All</label
                 >
 
                 <label for="patternField"
