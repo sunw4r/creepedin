@@ -11,6 +11,7 @@ chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
                 console.log('CreepedIn Storage cleared');
             });
         }
-
+   
     });
+
 });
