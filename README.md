@@ -33,7 +33,7 @@ https://chrome.google.com/webstore/detail/creepedin/mbhiifkhankomdcldcacejbciinb
 ## How it works ##
 
 `Creepedin` works by reading updates from the correct divs on LinkedIn's 'People' page. Navigate to the company page of your choice and scroll down until all employees are displayed. The list will populate automatically. (If it doesn't start populating, refresh the page).
-<img src="https://raw.githubusercontent.com/sunw4r/assets/master/creepedin.gif" alt="CreepedIn Working" />
+<img src="https://raw.githubusercontent.com/sunw4r/assets/master/creepedin04666.gif" alt="CreepedIn Working" />
 
 ## ##
 The idea for this extension is based on the amazing repository https://github.com/y0k4i-1337/puppetin.
