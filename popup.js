@@ -260,10 +260,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Add event listener to the AutoScroll button
     autoscrollButton.addEventListener("click", () => {
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            chrome.tabs.sendMessage(tabs[0].id, { type: "AUTOSCROLL" });
-        });
-
         // Toggle autoscroll state
         autoscrollActive = !autoscrollActive;
 
@@ -277,6 +273,12 @@ document.addEventListener("DOMContentLoaded", () => {
             autoscrollButton.textContent = "Autoscroll OFF";
             chrome.storage.local.set({ autoscroll: false });
         }
+
+        // Send message to background script
+        chrome.runtime.sendMessage({
+            type: "TOGGLE_AUTOSCROLL",
+            active: autoscrollActive,
+        });
     });
 });
 
