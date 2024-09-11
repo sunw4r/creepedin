@@ -1,3 +1,5 @@
+let autoscrollActive = false;
+
 function removeAccentsAndSpecialChars(str) {
     return str
         .normalize("NFD")
@@ -144,6 +146,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const patternCheckboxes = document.querySelectorAll(
         ".pattern-checkbox:not(#selectAll)"
     );
+    // Get reference to the AutoScroll button
+    const autoscrollButton = document.getElementById("autoscrollButton");
 
     // Function to check/uncheck all pattern checkboxes based on "Select All" state
     function toggleSelectAll() {
@@ -196,6 +200,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
         });
+        if (data.autoscroll) {
+            autoscrollActive = data.autoscroll;
+            autoscrollButton.classList.add("autoscroll-on");
+            autoscrollButton.textContent = "Autoscroll ON";
+        }
     });
 
     updateList();
@@ -247,6 +256,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 chrome.storage.local.set({ selectAll: false });
             }
         });
+    });
+
+    // Add event listener to the AutoScroll button
+    autoscrollButton.addEventListener("click", () => {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            chrome.tabs.sendMessage(tabs[0].id, { type: "AUTOSCROLL" });
+        });
+
+        // Toggle autoscroll state
+        autoscrollActive = !autoscrollActive;
+
+        // Update button style and text
+        if (autoscrollActive) {
+            autoscrollButton.classList.add("autoscroll-on");
+            autoscrollButton.textContent = "Autoscroll ON";
+            chrome.storage.local.set({ autoscroll: true });
+        } else {
+            autoscrollButton.classList.remove("autoscroll-on");
+            autoscrollButton.textContent = "Autoscroll OFF";
+            chrome.storage.local.set({ autoscroll: false });
+        }
     });
 });
 
