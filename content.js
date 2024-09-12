@@ -1,24 +1,11 @@
 let dataList = [];
 let isAutoscrolling = false;
 let scrollInterval = null;
-let throttleTimeout = null;
 
 // Check if URL is the correct one (needed to work without reloading the page)
 function checkURL() {
     const regex = /^https:\/\/www\.linkedin\.com\/company\/[^\/]+\/people\//;
     return regex.test(window.location.href);
-}
-
-// Throttle function to prevent excessive checks
-function throttle(func, limit) {
-    return function () {
-        if (!throttleTimeout) {
-            throttleTimeout = setTimeout(() => {
-                func.apply(this, arguments);
-                throttleTimeout = null;
-            }, limit);
-        }
-    };
 }
 
 // Fetch names and analyze changes
@@ -29,8 +16,8 @@ function checkDivChanges() {
         );
         dataList = [];
 
-        for (let i = 0; i < targetDivs.length; i++) {
-            let textContent = targetDivs[i].textContent.trim();
+        for (let div of targetDivs) {
+            let textContent = div.textContent.trim();
             if (!textContent.toLowerCase().includes("linkedin")) {
                 dataList.push(textContent);
             }
@@ -52,13 +39,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             isAutoscrolling = true;
             scrollInterval = setInterval(() => {
                 window.scrollBy(0, 10); // Scroll down by 10 pixels
-                if (
-                    window.innerHeight + window.scrollY >=
-                    document.body.scrollHeight
-                ) {
-                    clearInterval(scrollInterval);
-                }
-            }, 100); // Adjust the scroll speed
+            }, 25); // Adjust the scroll speed
         } else {
             // Stop autoscroll
             isAutoscrolling = false;
@@ -67,15 +48,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 });
 
-// Create a throttled version of checkDivChanges to prevent excessive calls
-const throttledCheckDivChanges = throttle(checkDivChanges, 200);
 
 // MutationObserver to monitor changes in the DOM
 const config = { childList: true, subtree: true };
 const callback = function (mutationsList) {
     for (const mutation of mutationsList) {
         if (mutation.type === "childList") {
-            throttledCheckDivChanges(); // Use throttled function
+            checkDivChanges();
         }
     }
 };
