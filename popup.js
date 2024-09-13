@@ -85,7 +85,10 @@ function formatNames(namesArray, formatPatterns, domain = "") {
                     secondName ? secondName.charAt(0) : ""
                 )
                 .replace("{lastname_firstletter}", lastName.charAt(0));
-
+            // Skip if the formatted name is empty or invalid
+            if (formattedName.trim() === "" || formattedName[0] === "@") {
+                continue;
+            }
             formattedNames.push(formattedName);
         }
     }
