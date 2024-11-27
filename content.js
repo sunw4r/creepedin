@@ -12,11 +12,11 @@ function checkURL() {
 //Start analyzing the changes and fetch the names
 function checkDivChanges() {
   if (checkURL()) {
-    const targetDivs = document.querySelectorAll('.ember-view.lt-line-clamp.lt-line-clamp--single-line.org-people-profile-card__profile-title.t-black');
+    const targetDivs = document.querySelectorAll('.ember-view.lt-line-clamp.lt-line-clamp--single-line');
     dataList = [];
 
     for (let i = 0; i < targetDivs.length; i++) {
-      let textContent = targetDivs[i].textContent.trim();
+      let textContent = targetDivs[i].innerText;
       if (!textContent.toLowerCase().includes('linkedin')) {
         dataList.push(textContent);
       }
