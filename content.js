@@ -12,12 +12,12 @@ function checkURL() {
 function checkDivChanges() {
     if (checkURL()) {
         const targetDivs = document.querySelectorAll(
-            ".ember-view.lt-line-clamp.lt-line-clamp--single-line.org-people-profile-card__profile-title.t-black"
+            ".ember-view.lt-line-clamp.lt-line-clamp--single-line"
         );
         dataList = [];
 
         for (let div of targetDivs) {
-            let textContent = div.textContent.trim();
+            let textContent = div.innerText;
             if (!textContent.toLowerCase().includes("linkedin")) {
                 dataList.push(textContent);
             }
