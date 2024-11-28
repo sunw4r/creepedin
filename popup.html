@@ -136,6 +136,7 @@
                 background-color: #bbb;
                 border: 1px solid #ccc;
                 padding: 6px;
+                cursor: pointer;
             }
 
             #clearButton {
@@ -182,14 +183,53 @@
                 font-style: italic; /* Make the label text italic for the "Select All" checkbox */
                 color: #888; /* Set a different color (gray in this example) */
             }
+
+            /* Container for the h1 and the button */
+            .header-container {
+                display: flex;
+                align-items: center;
+                justify-content: space-between; /* Moves h1 to left and button to right */
+                padding: 0 0px; /* Add some padding for spacing from page edges */
+                margin-bottom: 20px;
+            }
+
+            h1 {
+                margin: 0;
+            }
+
+            /* Function toggle button styles */
+            .toggleButton {
+                border: 1px solid #ccc;
+                padding: 6px 12px;
+                color: rgb(255, 255, 255);
+                font-weight: regular;
+                white-space: nowrap; /* Keep the text on one line */
+                width: auto;
+            }
+
+            .autoscroll-on {
+                background-color: #1366c8;
+                font-weight: bold;
+                color: #fff;
+            }
+
+            .autoscroll-on:hover {
+                background-color: #0f5aa0;
+            }
+
         </style>
     </head>
 
     <body>
-        <h1>
-            <span class="text-red">Creeped</span
-            ><span class="text-blue">In</span>
-        </h1>
+        <div class="header-container">
+            <h1>
+                <span class="text-red">Creeped</span
+                ><span class="text-blue">In</span>
+            </h1>
+            <button id="autoscrollButton" class="toggleButton">
+                Autoscroll OFF
+            </button>
+        </div>
         <div class="container">
             <textarea id="dataField" rows="10"></textarea>
             <div class="pattern-box">
