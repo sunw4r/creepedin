@@ -262,7 +262,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Add event listener to the AutoScroll button
-    autoscrollButton.addEventListener("click", () => {
+    autoscrollButton.addEventListener("click", async () => {
         // Toggle autoscroll state
         autoscrollActive = !autoscrollActive;
 
@@ -278,10 +278,18 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // Send message to background script
-        chrome.runtime.sendMessage({
-            type: "TOGGLE_AUTOSCROLL",
-            active: autoscrollActive,
-        });
+        try {
+            console.log("Sending message to background script: ", {
+                type: "TOGGLE_AUTOSCROLL",
+                active: autoscrollActive,
+            });
+            await chrome.runtime.sendMessage({
+                type: "TOGGLE_AUTOSCROLL",
+                active: autoscrollActive,
+            });
+        } catch (error) {
+            console.error("Error sending message to background script:", error);
+        }
     });
 });
 
