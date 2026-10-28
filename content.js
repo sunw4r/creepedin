@@ -1,28 +1,53 @@
 let dataList = [];
 let isAutoscrolling = false;
-let scrollInterval = null;
+let autoscrollInterval = null;
 
-// Check if URL is the correct one (needed to work without reloading the page)
 function checkURL() {
-    const regex = /^https:\/\/www\.linkedin\.com\/company\/[^\/]+\/people\//;
-    return regex.test(window.location.href);
+    return (
+        /^https:\/\/www\.linkedin\.com\/company\/[^/]+\/people\/?/.test(
+            window.location.href
+        ) ||
+        /^https:\/\/www\.linkedin\.com\/search\/results\/people\//.test(
+            window.location.href
+        )
+    );
 }
 
-// Fetch names and analyze changes
-function checkDivChanges() {
-    if (checkURL()) {
-        const targetDivs = document.querySelectorAll(
-            ".ember-view.lt-line-clamp.lt-line-clamp--single-line"
-        );
-        dataList = [];
-
-        for (let div of targetDivs) {
-            let textContent = div.innerText;
-            if (!textContent.toLowerCase().includes("linkedin")) {
-                dataList.push(textContent);
-            }
+function extractNameFromItem(item) {
+    const links = item.querySelectorAll('a[href*="/in/"]');
+    for (let link of links) {
+        const container =
+            link.querySelector("div[id]") || link.querySelector("p");
+        if (!container) continue;
+        const name = Array.from(container.childNodes)
+            .filter((n) => n.nodeType === Node.TEXT_NODE)
+            .map((n) => n.textContent.trim())
+            .join(" ")
+            .trim();
+        if (name && !name.toLowerCase().includes("linkedin")) {
+            return name;
         }
+    }
+    return null;
+}
 
+function checkDivChanges() {
+    if (!checkURL()) return;
+
+    const items = document.querySelectorAll('[role="listitem"]');
+    const seen = new Set(dataList);
+    let added = false;
+
+    for (let item of items) {
+        const name = extractNameFromItem(item);
+        if (name && !seen.has(name)) {
+            seen.add(name);
+            dataList.push(name);
+            added = true;
+        }
+    }
+
+    if (added) {
         chrome.storage.local.set({ dataList });
         chrome.runtime.sendMessage({
             type: "DOM_MUTATION",
@@ -31,46 +56,64 @@ function checkDivChanges() {
     }
 }
 
-// Handle messages from the background script
+function clickNextPage() {
+    const paginationButtons = document.querySelectorAll(
+        '[data-testid^="pagination-indicator-"]'
+    );
+    for (let btn of paginationButtons) {
+        if (btn.getAttribute("aria-current") === "true") {
+            const nextLi = btn.closest("li")?.nextElementSibling;
+            const nextBtn = nextLi?.querySelector("button");
+            if (nextBtn) {
+                nextBtn.click();
+                return true;
+            }
+            return false;
+        }
+    }
+    return false;
+}
+
+function randomDelay(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function scheduleNextClick() {
+    if (!isAutoscrolling) return;
+    const delay = randomDelay(7000, 23000);
+    autoscrollInterval = setTimeout(() => {
+        if (!isAutoscrolling) return;
+        checkDivChanges();
+        if (clickNextPage()) {
+            scheduleNextClick();
+        } else {
+            isAutoscrolling = false;
+            chrome.runtime.sendMessage({ type: "AUTOSCROLL_DONE" });
+        }
+    }, delay);
+}
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type === "AUTOSCROLL") {
         if (message.active) {
-            // Start autoscroll
             isAutoscrolling = true;
-            scrollInterval = setInterval(() => {
-                window.scrollBy(0, 10); // Scroll down by 10 pixels
-                // Check if button with class
-                // 'scaffold-finite-scroll__load-button' is visible
-                const loadMoreButton = document.querySelector(
-                    ".scaffold-finite-scroll__load-button"
-                );
-                if (loadMoreButton) {
-                    loadMoreButton.click();
-                }
-            }, 25); // Adjust the scroll speed
+            checkDivChanges();
+            scheduleNextClick();
         } else {
-            // Stop autoscroll
             isAutoscrolling = false;
-            clearInterval(scrollInterval);
+            clearTimeout(autoscrollInterval);
         }
     }
 });
 
-
-// MutationObserver to monitor changes in the DOM
-const config = { childList: true, subtree: true };
-const callback = function (mutationsList) {
+const observer = new MutationObserver((mutationsList) => {
     for (const mutation of mutationsList) {
         if (mutation.type === "childList") {
             checkDivChanges();
+            break;
         }
     }
-};
+});
+observer.observe(document.body, { childList: true, subtree: true });
 
-// Observe changes in the DOM body
-const targetNode = document.body;
-const observer = new MutationObserver(callback);
-observer.observe(targetNode, config);
-
-// Initial check when the content script runs
 checkDivChanges();

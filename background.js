@@ -19,27 +19,18 @@ chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     if (message.type === "TOGGLE_AUTOSCROLL") {
         console.log("Received message in background script:", message);
-        // Query all tabs to find those with linkedin.com in their URL
         chrome.tabs.query({ url: "https://www.linkedin.com/*" }, (tabs) => {
-            console.log("Tabs query result:", tabs);
-
-            if (tabs.length > 0) {
-                // Get the first tab whose URL contains /people/
-                const peopleTab = tabs.find(tab => tab.url.includes("/people/"));
-                if (peopleTab) {
-                    console.log("Found people tab:", peopleTab);
-                    chrome.tabs.sendMessage(
-                        peopleTab.id,
-                        {
-                            type: "AUTOSCROLL",
-                            active: message.active,
-                        }
-                    );
-                } else {
-                    console.error("No tabs with /people/ found");
-                }
-            } else {
-                console.error("No tabs with linkedin.com found");
+            if (tabs.length === 0) return;
+            const targetTab = tabs.find(
+                (tab) =>
+                    tab.url.includes("/search/results/people/") ||
+                    tab.url.includes("/people/")
+            );
+            if (targetTab) {
+                chrome.tabs.sendMessage(targetTab.id, {
+                    type: "AUTOSCROLL",
+                    active: message.active,
+                });
             }
         });
     }

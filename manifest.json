@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "CreepedIn",
     "description": "Simple full name extraction and conversion to emails/usernames. Utilizes the 'people' tab of the target company on LinkedIn.",
-    "version": "0.0.6667",
+    "version": "0.0.6668",
     "permissions": [
         "activeTab",
         "tabs",
@@ -13,7 +13,7 @@
     },
     "content_scripts": [
         {
-          "matches": ["https://www.linkedin.com/*"],
+          "matches": ["https://www.linkedin.com/company/*/people/*", "https://www.linkedin.com/search/results/people/*"],
           "js": ["content.js"],
           "run_at": "document_idle"
         }

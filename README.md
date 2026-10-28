@@ -32,7 +32,9 @@ https://chrome.google.com/webstore/detail/creepedin/mbhiifkhankomdcldcacejbciinb
 
 ## How it works ##
 
-`Creepedin` works by reading updates from the correct divs on LinkedIn's 'People' page. Navigate to the company page of your choice and scroll down until all employees are displayed. The list will populate automatically. (If it doesn't start populating, refresh the page).
+`Creepedin` works by extracting names from LinkedIn's people search results. Navigate to the company page of your choice, click the search icon on the 'People' tab, and the list will populate automatically. Use the **AutoNext** button to automatically paginate through all results with randomized delays.
+
+The extension supports both the company 'People' page (`/company/*/people/`) and the search results page (`/search/results/people/`).
 <img src="https://raw.githubusercontent.com/sunw4r/assets/master/creepedin04666.gif" alt="CreepedIn Working" />
 
 ## ##

@@ -205,8 +205,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         if (data.autoscroll) {
             autoscrollActive = data.autoscroll;
-            autoscrollButton.classList.add("autoscroll-on");
-            autoscrollButton.textContent = "Autoscroll ON";
+            autoscrollButton.classList.add("autonext-on");
+            autoscrollButton.textContent = "AutoNext ON";
         }
     });
 
@@ -268,12 +268,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Update button style and text
         if (autoscrollActive) {
-            autoscrollButton.classList.add("autoscroll-on");
-            autoscrollButton.textContent = "Autoscroll ON";
+            autoscrollButton.classList.add("autonext-on");
+            autoscrollButton.textContent = "AutoNext ON";
             chrome.storage.local.set({ autoscroll: true });
         } else {
-            autoscrollButton.classList.remove("autoscroll-on");
-            autoscrollButton.textContent = "Autoscroll OFF";
+            autoscrollButton.classList.remove("autonext-on");
+            autoscrollButton.textContent = "AutoNext OFF";
             chrome.storage.local.set({ autoscroll: false });
         }
 
